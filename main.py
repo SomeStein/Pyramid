@@ -1,8 +1,11 @@
 import time
 import os
+import sys
+import pickle
 from multiprocessing import Pool, Manager
 from rich.progress import Progress, TextColumn, BarColumn, TimeElapsedColumn
 from pyramid import pyramid, pyramid_bricks
+from medium_pyramid import medium_pyramid, medium_pyramid_bricks
 from small_pyramid import small_pyramid, small_pyramid_bricks
 from triangle import triangle, triangle_bricks
 from graph import Graph
@@ -10,7 +13,6 @@ from brick import Brick
 from processing import get_solutions
 from preprocessing import initialize
 
-# locks dont work ? Err 22; loosing solutions in small_pyramid (file access, prints and progress updates with queue)
 # only unique solutions with first brick only in symmetry area
 # automatically optimize brick order (shuffle and testing)
 # postprocessing with pickled solutions
@@ -25,9 +27,7 @@ def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> N
      
         queue = manager.Queue()
         
-        lock = manager.Lock()
-        
-        argument_list = initialize(graph, bricks, num_processes, queue, lock)
+        argument_list = initialize(graph, bricks, num_processes, queue)
   
         with Progress(
             TextColumn("[progress.description]{task.description}"),
@@ -54,19 +54,38 @@ def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> N
                 
                 while any(not progress.tasks[task_id].finished for task_id in task_progress):
                     
-                    if time.time() - start_time >= 60*60:
-                        
-                        try:
-                            for result in results:
-                                result.get()
-                                
-                        except Exception as e:
-                            raise e
-                    
                     while not queue.empty():
-                        with lock:
-                            task_id, progress_amount = queue.get()
-                            progress.update(task_progress[task_id],completed=progress_amount)
+                        queue_element = queue.get()
+                        
+                        if type(queue_element) == tuple:
+                            
+                            if type(queue_element[0]) == int:
+                                
+                                task_id, progress_amount = queue_element
+                                progress.update(task_progress[task_id],completed=progress_amount)
+                            
+                            elif type(queue_element[0]) == str:
+                                
+                                file_path, sol = queue_element
+                                
+                                global_solutions = []
+        
+                                with open(file_path, 'rb') as file:
+                                    data = pickle.load(file)
+                                    global_solutions = data["solutions"]
+
+                                if sol not in global_solutions:
+                                    global_solutions.append(sol)
+                                    
+                                data["solutions"] = global_solutions
+
+                                with open(file_path, 'wb') as file:
+                                    pickle.dump(data, file)
+                        
+                        else:
+                            print("Process", queue_element[0]+1, "had an exception:")
+                            raise queue_element[1]
+                                                  
                         
     print("\n\n\n\nTook:", round((time.time() - start_time)/60, 2), "min\n")
     
@@ -74,4 +93,4 @@ def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> N
 
 
 if __name__ == "__main__":
-    main(triangle,triangle_bricks)
+    main(pyramid, pyramid_bricks)
