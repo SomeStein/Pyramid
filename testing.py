@@ -7,6 +7,7 @@ from pyramid.examples.triangle import triangle, triangle_bricks
 if __name__ == "__main__":
    get_solutions(small_pyramid, small_pyramid_bricks)
    get_solutions(medium_pyramid, medium_pyramid_bricks)
-   get_solutions(triangle, triangle_bricks)
    get_solutions(pyramid, pyramid_bricks)
+   get_solutions(triangle, triangle_bricks)
+   
    

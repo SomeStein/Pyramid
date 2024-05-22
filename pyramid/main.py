@@ -85,3 +85,41 @@ def get_solutions(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_coun
     print("\n\n\n\nTook:", round((time.time() - start_time)/60, 2), "min\n")
     
     print("Finished!\n")
+
+def get_configurations(file_path):
+    
+    with open(file_path, "rb") as file:
+            data: dict = pickle.load(file)
+            graph: Graph = data["graph"]
+            bricks: list[Brick] = data["bricks"]
+            order1_sets: list[list[set[int]]] = data["order1_sets"]
+            solutions: list[list[int]] = data["solutions"]
+            
+    configurations = []
+            
+    for sol in solutions:
+        configuration = {}
+        for i, index in enumerate(sol):
+            for node_id in order1_sets[i][index]:
+                configuration[node_id] = bricks[i].id
+        configurations.append(configuration)
+        
+    return configurations
+            
+
+def render_configuration(graph: Graph, configuration: dict[int,int]):
+    
+    #get max coordinates and scale accordingly
+    
+    #get renderer
+    
+    #for node in configuration
+        #create object of sphere in nodes pos of color 
+        
+    #for node in configuration
+        #for neighbor of node
+            #create object of line between node and neighbor
+            
+    #open view window of rendered objects
+    
+    pass
