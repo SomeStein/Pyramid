@@ -1,8 +1,7 @@
 
-import time
-from helper_functions import get_fraction, merge_sets
+from pyramid.helper_functions import get_fraction, merge_sets
 
-def get_solutions(task_id:int, queue, file_path:str, order1_sets:list[list[set[int]]], ranges:list[tuple[int]], check_set:set[int] = set(), sol:list[int] = []) -> None:
+def process_solutions(task_id:int, queue, file_path:str, order1_sets:list[list[set[int]]], ranges:list[tuple[int]], check_set:set[int] = set(), sol:list[int] = []) -> None:
     
     try:
         
@@ -25,7 +24,7 @@ def get_solutions(task_id:int, queue, file_path:str, order1_sets:list[list[set[i
         for i, brick_set in enumerate(order1_sets[len_sol][start:end]):
             merged = merge_sets(brick_set,check_set)
             if merged:
-                get_solutions(task_id, queue, file_path, order1_sets, ranges, merged, sol + [start+i])
+                process_solutions(task_id, queue, file_path, order1_sets, ranges, merged, sol + [start+i])
 
 
         if len_sol == 0:

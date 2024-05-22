@@ -1,5 +1,5 @@
-from brick import Brick
-from node import Node
+from pyramid.brick import Brick
+from pyramid.node import Node
 
 
 class Graph():

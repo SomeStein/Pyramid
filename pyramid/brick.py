@@ -1,4 +1,4 @@
-from helper_functions import counter
+from pyramid.helper_functions import counter
 
 
 class Brick:

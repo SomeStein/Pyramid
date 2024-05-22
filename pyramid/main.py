@@ -1,17 +1,12 @@
 import time
 import os
-import sys
 import pickle
 from multiprocessing import Pool, Manager
 from rich.progress import Progress, TextColumn, BarColumn, TimeElapsedColumn
-from pyramid import pyramid, pyramid_bricks
-from medium_pyramid import medium_pyramid, medium_pyramid_bricks
-from small_pyramid import small_pyramid, small_pyramid_bricks
-from triangle import triangle, triangle_bricks
-from graph import Graph
-from brick import Brick
-from processing import get_solutions
-from preprocessing import initialize
+from pyramid.graph import Graph
+from pyramid.brick import Brick
+from pyramid.processing import process_solutions
+from pyramid.preprocessing import initialize
 
 # only unique solutions with first brick only in symmetry area
 # automatically optimize brick order (shuffle and testing)
@@ -19,7 +14,7 @@ from preprocessing import initialize
 # render solutions
 
 
-def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> None:
+def get_solutions(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> None:
     
     start_time = time.time()
  
@@ -49,7 +44,7 @@ def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> N
                 results = []
                 
                 for i in range(len(argument_list)):
-                    result = pool.apply_async(get_solutions, argument_list[i])
+                    result = pool.apply_async(process_solutions, argument_list[i])
                     results.append(result)
                 
                 while any(not progress.tasks[task_id].finished for task_id in task_progress):
@@ -90,7 +85,3 @@ def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> N
     print("\n\n\n\nTook:", round((time.time() - start_time)/60, 2), "min\n")
     
     print("Finished!\n")
-
-
-if __name__ == "__main__":
-    main(pyramid, pyramid_bricks)
