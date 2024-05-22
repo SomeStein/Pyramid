@@ -5,5 +5,5 @@ from pyramid.examples.pyramid import pyramid, pyramid_bricks
 from pyramid.examples.triangle import triangle, triangle_bricks
 
 if __name__ == "__main__":
-   get_solutions(pyramid, pyramid_bricks)
+   get_solutions(medium_pyramid, medium_pyramid_bricks)
    

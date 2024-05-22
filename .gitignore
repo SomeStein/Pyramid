@@ -1,3 +1,7 @@
 solves/*
 .venv
 __pycache__
+solves/medium_pyramid_solutions.data
+solves/pyramid_solutions.data
+solves/small_pyramid_solutions.data
+solves/triangle_solutions.data
