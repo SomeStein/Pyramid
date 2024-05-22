@@ -93,4 +93,4 @@ def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> N
 
 
 if __name__ == "__main__":
-    main(medium_pyramid, medium_pyramid_bricks,1)
+    main(pyramid, pyramid_bricks)
