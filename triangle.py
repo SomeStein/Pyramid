@@ -36,7 +36,7 @@ brick_orange = [(16, 0, 0), (16, 0, 0), (-16, 0, 0),
 brick_violet = [(16, 0, 0), (16, 0, 0), (16, 0, 0), (-16, 0, 0), (0, 16, 0)]
 
 
-bricks = [brick_orange, brick_blue, brick_white, brick_lime,
+triangle_bricks = [brick_orange, brick_blue, brick_white, brick_lime,
           brick_green, brick_lightblue, brick_rosa, brick_yellow,
           brick_violet,  brick_pink, brick_red, brick_grey]
 
@@ -44,4 +44,4 @@ import random
 
 c = counter()
 
-bricks = [Brick(b_d, next(c)) for b_d in bricks]
+triangle_bricks = [Brick(b_d, next(c)) for b_d in triangle_bricks]

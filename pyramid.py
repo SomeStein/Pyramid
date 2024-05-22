@@ -52,13 +52,13 @@ brick_orange = [(16, 0, 0), (16, 0, 0), (-16, 0, 0),
 brick_violet = [(16, 0, 0), (16, 0, 0), (16, 0, 0), (-16, 0, 0), (0, 16, 0)]
 
 
-bricks = [brick_orange, brick_white, brick_blue, brick_lime,
+pyramid_bricks = [brick_orange, brick_white, brick_blue, brick_lime,
           brick_green, brick_yellow, brick_lightblue, brick_violet,
           brick_pink, brick_rosa, brick_red, brick_grey]
 
 c = counter()
 
-bricks = [Brick(b_d, next(c)) for b_d in bricks]
+pyramid_bricks = [Brick(b_d, next(c)) for b_d in pyramid_bricks]
 
 
 if __name__ == "__main__":
@@ -70,5 +70,5 @@ if __name__ == "__main__":
             print("  ", neighbor)
 
     print("\n\n")
-    for brick in bricks:
+    for brick in pyramid_bricks:
         print(brick)

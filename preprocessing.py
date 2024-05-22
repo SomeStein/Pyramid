@@ -138,7 +138,8 @@ def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue, lock) 
         tup = (i, queue, lock, file_path, order1_sets, ranges_list[i])
         argument_list.append(tup)
         
-
-    print("returning argument_list of length:", len(argument_list), "\n")
+        print(f"Process {i+1} has ranges", ranges_list[i])
+        
+    print("\nreturning argument_list of length:", len(argument_list), "\n")
 
     return argument_list

@@ -21,17 +21,18 @@ def get_solutions(task_id:int, queue, lock, file_path:str, order1_sets:list[list
                 data = pickle.load(file)
                 global_solutions = data["solutions"]
 
-            if sol not in global_solutions:
-                global_solutions.append(sol)
-                
-            data["solutions"] = global_solutions
+        if sol not in global_solutions:
+            global_solutions.append(sol)
             
-            message = f"Process {sol[0]+1} found: {sol}"
-            
-            message = message + " "*(90 - len(message)) + "total found: " + str(len(global_solutions))
-            
-            print("\n\033[K\n\033[K", message,  "\033[F\033[F" , sep="", end = "\r")
-
+        data["solutions"] = global_solutions
+        
+        message = f"Process {sol[0]+1} found: {sol}"
+        
+        message = message + " "*(90 - len(message)) + "total found: " + str(len(global_solutions))
+        
+        print("\n\033[K\n\033[K", message,  "\033[F\033[F" , sep="", end = "\r")
+        
+        with lock:
             with open(file_path, 'wb') as file:
                 pickle.dump(data, file)
 
