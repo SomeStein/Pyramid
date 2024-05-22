@@ -30,7 +30,7 @@ def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
 
     return order1_graph_lists
  
-def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue, lock) -> list[tuple]:
+def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue) -> list[tuple]:
     
     print("initializing...\n")
 
@@ -45,7 +45,7 @@ def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue, lock) 
     brick_order = list(range(len(bricks)))
     bricks = [bricks[i] for i in brick_order]
     from random import shuffle
-    shuffle(bricks)
+    #shuffle(bricks)
     
     # Optimized preprocessing
     order1_sets = preprocessing(graph, bricks)
@@ -137,7 +137,7 @@ def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue, lock) 
 
     for i in range(num_processes):
 
-        tup = (i, queue, lock, file_path, order1_sets, ranges_list[i])
+        tup = (i, queue, file_path, order1_sets, ranges_list[i])
         argument_list.append(tup)
         
         print(f"Process {i+1} has ranges", ranges_list[i])
