@@ -1,5 +1,6 @@
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import numpy as np
 import time
 import os
 import pickle
@@ -19,6 +20,11 @@ from pyramid.preprocessing import initialize
 def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu_count()) -> None:
 
     start_time = time.time()
+
+    folder_name = "solves"
+
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
 
     with Manager() as manager:
 
@@ -147,6 +153,18 @@ def render_configuration(graph: Graph, configuration: dict[int, int]):
     # Create a 3D plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+
+    steps = graph.get_all_offsets()
+
+    # Draw lines between nodes of the same color within valid steps
+    for node_id1 in graph:
+        for node_id2 in graph:
+            if configuration[node_id1] == configuration[node_id2]:
+                if graph[node_id1].get_offset(graph[node_id2]) in steps:
+                    pos1 = graph[node_id1].pos
+                    pos2 = graph[node_id2].pos
+                    ax.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], [
+                            pos1[2], pos2[2]], color=colormap[configuration[node_id1]])
 
     # Scatter plot with colors
     ax.scatter(x_coords, y_coords, z_coords, c=colors, marker='o', s=100)

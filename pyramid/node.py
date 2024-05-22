@@ -11,8 +11,8 @@ class Node:
     def __str__(self):
         return f"Node {self.id}: " + str(self.pos)
 
-    def get_offset(self, cell):
-        return (cell.x-self.x, cell.y-self.y, cell.z-self.z)
+    def get_offset(self, node):
+        return (node.x-self.x, node.y-self.y, node.z-self.z)
 
     def add_neighbor(self, cell):
         offset = self.get_offset(cell)
