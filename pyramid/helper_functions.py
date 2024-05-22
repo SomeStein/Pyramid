@@ -41,6 +41,9 @@ def get_combinations(brick_lists1: list[set[int]], brick_lists2: list[set[int]])
                 combinations.append(merged)
     return combinations
 
+def symmetries_filter(graph, order1_sets):
+    pass
+
 
 def optimize_brick_order(order1_sets: list[list[set[int]]]) -> tuple[list[int], int]:
 

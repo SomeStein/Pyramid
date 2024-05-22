@@ -1,6 +1,7 @@
 import pickle
 from pyramid.graph import Graph
 from pyramid.brick import Brick, calculate_brick_transforms
+from pyramid.helper_functions import symmetries_filter
 
 
 def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
@@ -49,6 +50,9 @@ def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue) -> lis
     # Optimized preprocessing
     order1_sets = preprocessing(graph, bricks)
     print("optimized 1st order list preprocessed\n")
+    
+    # Filter first brick by graph symmetries
+    # order1_sets = symmetries_filter(graph, order1_sets)
 
     # Numbers of unique brick configuratons
     string = "order 1 counts for optimized brick order:  "
@@ -101,9 +105,6 @@ def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue) -> lis
 
                 pickle.dump(data, file)
                 
-                
-    
-    
     
     def ranges_generator(lengths:list[int], ranges_list:list, num:int, tuple_list:list[tuple[int]]=[]) -> list[tuple[int]]:
         
