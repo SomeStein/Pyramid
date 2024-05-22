@@ -1,7 +1,6 @@
 import pickle
-from graph import Graph
-from brick import Brick
-from brick import calculate_brick_transforms
+from pyramid.graph import Graph
+from pyramid.brick import Brick, calculate_brick_transforms
 
 
 def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:

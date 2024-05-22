@@ -1,7 +1,7 @@
-from brick import Brick
-from node import Node
-from graph import Graph
-from helper_functions import counter
+from pyramid.brick import Brick
+from pyramid.node import Node
+from pyramid.graph import Graph
+from pyramid.helper_functions import counter
 
 c = counter()
 
