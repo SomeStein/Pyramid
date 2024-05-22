@@ -10,8 +10,7 @@ from brick import Brick
 from processing import get_solutions
 from preprocessing import initialize
 
-# GIT!
-# hardcoded stuff (test with different graphs and bricks)
+# locks dont work ? Err 22; loosing solutions in small_pyramid (file access, prints and progress updates with queue)
 # only unique solutions with first brick only in symmetry area
 # automatically optimize brick order (shuffle and testing)
 # postprocessing with pickled solutions

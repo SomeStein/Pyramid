@@ -44,6 +44,8 @@ def initialize(graph:Graph, bricks:list[Brick], num_processes:int, queue, lock) 
     # print("new brick order: ", brick_order, "with prod", min, "\n")
     brick_order = list(range(len(bricks)))
     bricks = [bricks[i] for i in brick_order]
+    from random import shuffle
+    shuffle(bricks)
     
     # Optimized preprocessing
     order1_sets = preprocessing(graph, bricks)
