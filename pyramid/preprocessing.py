@@ -31,7 +31,7 @@ def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
     return order1_graph_lists
 
 
-def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue) -> list[tuple]:
+def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, total_found) -> list[tuple]:
 
     print("initializing...\n")
 
@@ -135,7 +135,7 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue) -> 
 
     for i in range(num_processes):
 
-        tup = (i, queue, file_path, order1_sets, ranges_list[i])
+        tup = (i, queue, total_found, file_path, order1_sets, ranges_list[i])
         argument_list.append(tup)
 
         print(f"Process {i+1} has ranges", ranges_list[i])
