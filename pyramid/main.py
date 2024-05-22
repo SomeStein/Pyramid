@@ -95,9 +95,9 @@ def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu
                                 "Process", queue_element[0]+1, "had an exception:")
                             raise queue_element[1]
 
-        print(f"Finished with {total_found.value} solutions\n")
+        print(f"\n\n\nFinished with {total_found.value} solutions\n")
 
-    print("\n\n\n\nTook:", round((time.time() - start_time)/60, 2), "min\n")
+    print("Took:", round((time.time() - start_time)/60, 2), "min\n")
 
 
 def get_configurations(file_path):
