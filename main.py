@@ -5,6 +5,7 @@ import pickle
 from multiprocessing import Pool, Manager
 from rich.progress import Progress, TextColumn, BarColumn, TimeElapsedColumn
 from pyramid import pyramid, pyramid_bricks
+from medium_pyramid import medium_pyramid, medium_pyramid_bricks
 from small_pyramid import small_pyramid, small_pyramid_bricks
 from triangle import triangle, triangle_bricks
 from graph import Graph
@@ -92,4 +93,4 @@ def main(graph:Graph,bricks:list[Brick],num_processes:int = os.cpu_count()) -> N
 
 
 if __name__ == "__main__":
-    main(pyramid,pyramid_bricks)
+    main(medium_pyramid, medium_pyramid_bricks,1)

@@ -16,7 +16,7 @@ def get_solutions(task_id:int, queue, file_path:str, order1_sets:list[list[set[i
             
             message = f"Process {task_id+1} found: {sol}"
                                 
-            print("\n\033[K\n\033[K", message, "\033[F\033[F" , sep="", end = "\r")
+            print("\n\033[K\n\033[K" + message + "\033[F\033[F\r" , end = "")
 
             return
 
