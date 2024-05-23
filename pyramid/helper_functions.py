@@ -41,8 +41,174 @@ def get_combinations(brick_lists1: list[set[int]], brick_lists2: list[set[int]])
                 combinations.append(merged)
     return combinations
 
+
+def rotate_90(id_list, a):
+    new_list = []
+    for k in range(a):
+        for i, id in enumerate(id_list[k*a:(k+1)*a]):
+            new_list.insert(i*(k+1), id)
+    return new_list
+
+
+def mirror_x(id_list, a):
+    new_list = []
+    for k in range(a):
+        new_list += id_list[a*(a-k-1):a*(a-k)]
+    return new_list
+
+
+def get_graph_symmetries(graph) -> list[dict]:
+
+    graph_symmetries = []
+
+    if "pyramid" in graph.name:
+
+        heights = list(set([node.z for node in graph.nodes.values()]))
+        heights.sort()
+
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            a = int(len(id_list)**(1/2))
+            new_id_list = mirror_x(id_list, a)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            a = int(len(id_list)**(1/2))
+            new_id_list = rotate_90(id_list, a)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            a = int(len(id_list)**(1/2))
+            new_id_list = rotate_90(id_list, a)
+            new_id_list = mirror_x(new_id_list, a)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            a = int(len(id_list)**(1/2))
+            new_id_list = rotate_90(id_list, a)
+            new_id_list = rotate_90(new_id_list, a)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            a = int(len(id_list)**(1/2))
+            new_id_list = rotate_90(id_list, a)
+            new_id_list = rotate_90(new_id_list, a)
+            new_id_list = mirror_x(new_id_list, a)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            a = int(len(id_list)**(1/2))
+            new_id_list = rotate_90(id_list, a)
+            new_id_list = rotate_90(new_id_list, a)
+            new_id_list = rotate_90(new_id_list, a)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            a = int(len(id_list)**(1/2))
+            new_id_list = rotate_90(id_list, a)
+            new_id_list = rotate_90(new_id_list, a)
+            new_id_list = rotate_90(new_id_list, a)
+            new_id_list = mirror_x(new_id_list, a)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        return graph_symmetries
+
+
+def symmetry_duplicates(brick_set, brick_sets, graph_symmetries):
+    for other_brick_set in brick_sets:
+        for symmetry_dict in graph_symmetries:
+            transformed_other_brick_set = set()
+            for node_id in other_brick_set:
+                transformed_node_id = symmetry_dict[node_id+1]-1
+                transformed_other_brick_set.add(transformed_node_id)
+            if brick_set == transformed_other_brick_set:
+                return True
+    return False
+
+
 def symmetries_filter(graph, order1_sets):
-    pass
+
+    graph_symmetries = get_graph_symmetries(graph)
+
+    index = 3
+
+    brick1_sets = order1_sets[index]
+
+    for i in range(len(brick1_sets)-1, -1, -1):
+        brick1_set = brick1_sets[i]
+        if symmetry_duplicates(brick1_set, brick1_sets[:i], graph_symmetries):
+            brick1_sets.pop(i)
+
+    return order1_sets[:index] + [brick1_sets] + order1_sets[index+1:]
 
 
 def optimize_brick_order(order1_sets: list[list[set[int]]]) -> tuple[list[int], int]:

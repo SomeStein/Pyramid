@@ -53,7 +53,7 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
     print("optimized 1st order list preprocessed\n")
 
     # Filter first brick by graph symmetries
-    # order1_sets = symmetries_filter(graph, order1_sets)
+    order1_sets = symmetries_filter(graph, order1_sets)
 
     # Numbers of unique brick configuratons
     string = "order 1 counts for optimized brick order:  "

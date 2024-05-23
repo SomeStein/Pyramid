@@ -10,8 +10,6 @@ def process_solutions(task_id: int, queue, total_found, file_path: str, order1_s
 
         if len_sol == len(ranges):
 
-            queue.put((task_id, get_fraction(sol, ranges)))
-
             queue.put((file_path, sol))
 
             message = f"Process {task_id+1} found: {sol}"
@@ -23,6 +21,10 @@ def process_solutions(task_id: int, queue, total_found, file_path: str, order1_s
                   "\033[F\033[F\r", end="")
 
             return
+
+        if len_sol == len(ranges) - 1:
+
+            queue.put((task_id, get_fraction(sol, ranges)))
 
         start, end = ranges[len_sol]
 
