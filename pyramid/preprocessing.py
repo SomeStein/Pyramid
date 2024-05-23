@@ -20,7 +20,7 @@ def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
     for i in range(len(transformed_bricks)):
         order1_graph_lists.append([])
         for brick in transformed_bricks[i]:
-            for node_id in range(1, len(graph)+1):
+            for node_id in graph:
                 check_list = [0]*len(graph)
                 if not graph.check_overlap(brick, node_id, check_list):
                     graph.lay(brick, node_id, check_list)

@@ -199,7 +199,7 @@ def symmetries_filter(graph, order1_sets):
 
     graph_symmetries = get_graph_symmetries(graph)
 
-    index = 3
+    index = 5
 
     brick1_sets = order1_sets[index]
 
@@ -208,7 +208,7 @@ def symmetries_filter(graph, order1_sets):
         if symmetry_duplicates(brick1_set, brick1_sets[:i], graph_symmetries):
             brick1_sets.pop(i)
 
-    return order1_sets[:index] + [brick1_sets] + order1_sets[index+1:]
+    return [brick1_sets] + order1_sets[:index] + order1_sets[index+1:]
 
 
 def optimize_brick_order(order1_sets: list[list[set[int]]]) -> tuple[list[int], int]:

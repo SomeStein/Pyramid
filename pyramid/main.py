@@ -11,10 +11,10 @@ from pyramid.brick import Brick
 from pyramid.processing import process_solutions
 from pyramid.preprocessing import initialize
 
-# only unique solutions with first brick only in symmetry area
-# automatically optimize brick order (shuffle and testing)
-# postprocessing with pickled solutions
-# render solutions
+# node_id mess
+# automatically optimize brick order (maximize blocking with symmetry filter and ordering)
+# symmetry for triangle
+# symmetry for every graph
 
 
 def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu_count()) -> None:
