@@ -5,6 +5,7 @@ from pyramid.examples.pyramid import pyramid, pyramid_bricks
 from pyramid.examples.small_triangle import small_triangle, small_triangle_bricks
 from pyramid.examples.medium_triangle import medium_triangle, medium_triangle_bricks
 from pyramid.examples.triangle import triangle, triangle_bricks
+import random
 import os
 import pickle
 
@@ -26,7 +27,7 @@ if __name__ == "__main__":
 
     while inp not in ["Y", "y", "Yes", "yes", "N", "n", "No", "no"]:
 
-        inp = input("render 1st solution? Y/n: ")
+        inp = input("render solution preview? Y/n: ")
 
         if inp in ["Y", "y", "Yes", "yes"]:
 
@@ -36,5 +37,5 @@ if __name__ == "__main__":
                     data = pickle.load(file)
                 graph = data["graph"]
                 configs = get_configurations("solves/" + file_path)
-                config = configs[0]
+                config = random.choice(configs)
                 render_configuration(graph, config)
