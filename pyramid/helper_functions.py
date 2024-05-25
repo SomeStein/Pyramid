@@ -7,10 +7,9 @@ def counter():
 
 
 def merge_sets(set1: set[int], set2: set[int]) -> set[int]:
-    for e in set1:
-        if e in set2:
-            return False
-    return set1.union(set2)
+    if set1.isdisjoint(set2):
+        return set1.union(set2)
+    return False
 
 
 def get_fraction(sol: list[int], ranges: list[tuple[int]]) -> float:
@@ -41,6 +40,25 @@ def get_combinations(brick_lists1: list[set[int]], brick_lists2: list[set[int]])
                 combinations.append(merged)
     return combinations
 
+def ranges_generator(lengths: list[int], ranges_list: list, num: int, tuple_list: list[tuple[int]] = []) -> list[tuple[int]]:
+
+    if len(tuple_list) > len(lengths):
+        print("too many splits")
+        raise Exception
+    if num <= 1:
+        ranges = tuple_list + [(0, l) for l in lengths[len(tuple_list):]]
+        ranges_list.append(ranges)
+        return
+
+    b = lengths[len(tuple_list)]
+    a = int(b/2)
+
+    new_tuple_list_a = tuple_list + [(0, a)]
+    new_tuple_list_b = tuple_list + [(a, b)]
+
+    ranges_generator(lengths, ranges_list, num/2,  new_tuple_list_a)
+    ranges_generator(lengths, ranges_list, num/2,  new_tuple_list_b)
+
 
 def rotate_90(id_list, a):
     new_list = []
@@ -55,6 +73,26 @@ def mirror_x(id_list, a):
     for k in range(a):
         new_list += id_list[a*(a-k-1):a*(a-k)]
     return new_list
+
+def diag_morror(original_list):
+
+    rows = int(-1/2 + (1/4 + 2*len(original_list))**(1/2))
+
+    triangle = []
+    start = 0
+    for i in range(rows):
+        end = start + i + 1
+        triangle.append(original_list[start:end])
+        start = end
+
+    diag_tria = []
+
+    for i in range(1, rows+1):
+        for j in range(1, i+1):
+            e = triangle[rows - j][rows - i]
+            diag_tria.append(e)
+
+    return diag_tria
 
 
 def get_graph_symmetries(graph) -> list[dict]:
@@ -181,6 +219,28 @@ def get_graph_symmetries(graph) -> list[dict]:
         graph_symmetries.append(symmetry_dict)
 
         return graph_symmetries
+    
+    elif "triangle" in graph.name:
+        
+        heights = list(set([node.z for node in graph.nodes.values()]))
+        heights.sort()
+        
+        symmetry_dict = {}
+        for height in heights:
+            id_list = []
+            for node in graph.nodes.values():
+                if node.z == height:
+                    id_list.append(node.id)
+
+            # TRANSFORMATION
+            new_id_list = diag_morror(id_list)
+
+            for i in range(len(id_list)):
+                symmetry_dict[id_list[i]] = new_id_list[i]
+        graph_symmetries.append(symmetry_dict)
+
+        return graph_symmetries
+        
 
 
 def symmetry_duplicates(brick_set, brick_sets, graph_symmetries):
@@ -199,77 +259,43 @@ def symmetries_filter(graph, order1_sets):
 
     graph_symmetries = get_graph_symmetries(graph)
 
-    index = 5
+    max_reduction = 0
+    max_reduction_index = 0
 
-    brick1_sets = order1_sets[index]
+    for index in range(len(order1_sets)):
+
+        brick1_sets = order1_sets[index].copy()
+
+        for i in range(len(brick1_sets)-1, -1, -1):
+            brick1_set = brick1_sets[i]
+            if symmetry_duplicates(brick1_set, brick1_sets[:i], graph_symmetries):
+                brick1_sets.pop(i)
+
+        if len(order1_sets[index])/len(brick1_sets) > max_reduction:
+            max_reduction = len(order1_sets[index])/len(brick1_sets)
+            max_reduction_index = index
+
+    brick1_sets = order1_sets[max_reduction_index].copy()
 
     for i in range(len(brick1_sets)-1, -1, -1):
         brick1_set = brick1_sets[i]
         if symmetry_duplicates(brick1_set, brick1_sets[:i], graph_symmetries):
             brick1_sets.pop(i)
 
-    return [brick1_sets] + order1_sets[:index] + order1_sets[index+1:]
+    return order1_sets[:max_reduction_index] + [brick1_sets] + order1_sets[max_reduction_index+1:]
 
 
 def optimize_brick_order(order1_sets: list[list[set[int]]]) -> tuple[list[int], int]:
+    
+    
+    # Pair each sublist with its original index
+    indexed_lists = [(i, sublist) for i, sublist in enumerate(order1_sets)]
 
-    min = False
-    min_comb = False
+    # Sort the pairs based on the length of the sublists
+    sorted_indexed_lists = sorted(indexed_lists, key=lambda x: len(x[1]))
 
-    length_dict = {}
+    # Extract the sorted sublists and the original indices
+    sorted_lists = [sublist for _, sublist in sorted_indexed_lists]
+    original_indices = [index for index, _ in sorted_indexed_lists]
 
-    for i in range(len(order1_sets)):
-        for j in range(i+1, len(order1_sets)):
-            lists1 = order1_sets[i]
-            lists2 = order1_sets[j]
-
-            length_dict[(i, j)] = len(get_combinations(lists1, lists2))
-
-    def iter(indices: list[int], pairs: list[tuple[int]] = [], prod=1) -> None:
-
-        nonlocal length_dict
-        nonlocal min
-        nonlocal min_comb
-
-        if len(indices) == 2:
-
-            prod *= length_dict[(indices[0], indices[1])]
-
-            pairs.append((indices[0], indices[1]))
-
-            if not min:
-                min = prod
-                min_comb = pairs
-                print(pairs, min, end="\r")
-
-            if prod < min:
-                min = prod
-                min_comb = pairs
-                print(pairs, min, end="\r")
-
-            return
-
-        for i in range(len(indices)):
-            for j in range(i+1, len(indices)):
-
-                _indices = indices.copy()
-
-                pair = (_indices.pop(i), _indices.pop(j-1))
-
-                l = length_dict[pair]
-
-                _pairs = pairs.copy()
-                _pairs.append(pair)
-
-                iter(_indices, _pairs, prod*l)
-        return
-
-    iter(list(range(len(order1_sets))))
-
-    brick_order = []
-
-    for i, j in min_comb:
-        brick_order.append(i)
-        brick_order.append(j)
-
-    return brick_order, min
+    return sorted_lists, original_indices

@@ -11,12 +11,6 @@ from pyramid.brick import Brick
 from pyramid.processing import process_solutions
 from pyramid.preprocessing import initialize
 
-# node_id mess
-# automatically optimize brick order (maximize blocking with symmetry filter and ordering)
-# symmetry for triangle
-# symmetry for every graph
-
-
 def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu_count()) -> None:
 
     start_time = time.time()
@@ -71,24 +65,30 @@ def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu
                                     task_progress[task_id], completed=progress_amount)
 
                             elif type(queue_element[0]) == str:
+                                
+                                if queue_element[0] == "counts":
+                                    
+                                    print(queue_element[1])
+                                    
+                                else:
 
-                                file_path, sol = queue_element
+                                    file_path, sol = queue_element
 
-                                global_solutions = []
+                                    global_solutions = []
 
-                                with open(file_path, 'rb') as file:
-                                    data = pickle.load(file)
-                                    global_solutions = data["solutions"]
+                                    with open(file_path, 'rb') as file:
+                                        data = pickle.load(file)
+                                        global_solutions = data["solutions"]
 
-                                if sol not in global_solutions:
-                                    global_solutions.append(sol)
+                                    if sol not in global_solutions:
+                                        global_solutions.append(sol)
 
-                                data["solutions"] = global_solutions
+                                    data["solutions"] = global_solutions
 
-                                total_found.value = len(global_solutions)
+                                    total_found.value = len(global_solutions)
 
-                                with open(file_path, 'wb') as file:
-                                    pickle.dump(data, file)
+                                    with open(file_path, 'wb') as file:
+                                        pickle.dump(data, file)
 
                         else:
                             print(
