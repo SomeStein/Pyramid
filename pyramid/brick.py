@@ -30,6 +30,9 @@ class Brick:
     def __len__(self):
         return len(self.directions)
 
+    def __eq__(self, other):
+        return self.directions == other.directions
+
 
 def calculate_brick_transforms(brick: Brick, steps: list[tuple[int]]) -> list[Brick]:
 

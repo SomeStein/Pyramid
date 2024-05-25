@@ -40,6 +40,7 @@ def get_combinations(brick_lists1: list[set[int]], brick_lists2: list[set[int]])
                 combinations.append(merged)
     return combinations
 
+
 def ranges_generator(lengths: list[int], ranges_list: list, num: int, tuple_list: list[tuple[int]] = []) -> list[tuple[int]]:
 
     if len(tuple_list) > len(lengths):
@@ -73,6 +74,7 @@ def mirror_x(id_list, a):
     for k in range(a):
         new_list += id_list[a*(a-k-1):a*(a-k)]
     return new_list
+
 
 def diag_morror(original_list):
 
@@ -219,12 +221,12 @@ def get_graph_symmetries(graph) -> list[dict]:
         graph_symmetries.append(symmetry_dict)
 
         return graph_symmetries
-    
+
     elif "triangle" in graph.name:
-        
+
         heights = list(set([node.z for node in graph.nodes.values()]))
         heights.sort()
-        
+
         symmetry_dict = {}
         for height in heights:
             id_list = []
@@ -240,7 +242,6 @@ def get_graph_symmetries(graph) -> list[dict]:
         graph_symmetries.append(symmetry_dict)
 
         return graph_symmetries
-        
 
 
 def symmetry_duplicates(brick_set, brick_sets, graph_symmetries):
@@ -248,7 +249,7 @@ def symmetry_duplicates(brick_set, brick_sets, graph_symmetries):
         for symmetry_dict in graph_symmetries:
             transformed_other_brick_set = set()
             for node_id in other_brick_set:
-                transformed_node_id = symmetry_dict[node_id+1]-1
+                transformed_node_id = symmetry_dict[node_id]
                 transformed_other_brick_set.add(transformed_node_id)
             if brick_set == transformed_other_brick_set:
                 return True
@@ -286,8 +287,7 @@ def symmetries_filter(graph, order1_sets):
 
 
 def optimize_brick_order(order1_sets: list[list[set[int]]]) -> tuple[list[int], int]:
-    
-    
+
     # Pair each sublist with its original index
     indexed_lists = [(i, sublist) for i, sublist in enumerate(order1_sets)]
 

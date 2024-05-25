@@ -41,24 +41,20 @@ class Graph():
             nodeIds.append(node.id)
         return nodeIds
 
-    def check_overlap(self, brick: Brick, node_id: int, check_list: list[int]) -> list[int]:
+    def check_overlap(self, brick: Brick, node_id: int, check_dict: dict[int]) -> int:
         node = self.nodes[node_id]
-        if check_list[node.id - 1]:
-            return check_list[node.id - 1]
+        if node.id in check_dict:
+            return check_dict[node.id]
         for i in range(len(brick)):
             try:
                 node = node.neighbors[brick[i]]
             except KeyError:
                 return True
-            if check_list[node.id-1]:
-                return node.id
         return False
 
-    def lay(self, brick: Brick, node_id: int, check_list: list[int]) -> None:
+    def lay(self, brick: Brick, node_id: int, check_dict: dict[int, int]) -> None:
         node = self.nodes[node_id]
-        check_list[node.id - 1] = brick.id  # "x" + str(brick.id)
+        check_dict[node.id] = brick.id
         for i in range(len(brick)):
             node = node.neighbors[brick[i]]
-            if check_list[node.id-1] != 0 and check_list[node.id-1] != brick.id:
-                print(brick.id)
-            check_list[node.id-1] = brick.id
+            check_dict[node.id] = brick.id

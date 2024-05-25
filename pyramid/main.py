@@ -11,6 +11,9 @@ from pyramid.brick import Brick
 from pyramid.processing import process_solutions
 from pyramid.preprocessing import initialize
 
+# node id mess (again dumbo)
+
+
 def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu_count()) -> None:
 
     start_time = time.time()
@@ -38,7 +41,7 @@ def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu
 
             for task_id in range(num_processes):
 
-                task_description = f"Process {task_id + 1}"
+                task_description = f"Process {task_id}"
                 task_progress[task_id] = progress.add_task(
                     task_description, total=1)
 
@@ -65,11 +68,11 @@ def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu
                                     task_progress[task_id], completed=progress_amount)
 
                             elif type(queue_element[0]) == str:
-                                
+
                                 if queue_element[0] == "counts":
-                                    
+
                                     print(queue_element[1])
-                                    
+
                                 else:
 
                                     file_path, sol = queue_element
@@ -92,7 +95,7 @@ def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu
 
                         else:
                             print(
-                                "Process", queue_element[0]+1, "had an exception:")
+                                "Process", queue_element[0], "had an exception:")
                             raise queue_element[1]
 
         print(f"\n\n\nFinished with {total_found.value} solutions\n")
@@ -115,7 +118,7 @@ def get_configurations(file_path):
         configuration = {}
         for i, index in enumerate(sol):
             for node_id in order1_sets[i][index]:
-                configuration[node_id+1] = bricks[i].id
+                configuration[node_id] = bricks[i].id
         configurations.append(configuration)
 
     return configurations
