@@ -13,8 +13,9 @@ if __name__ == "__main__":
 
     get_solutions(small_pyramid, small_pyramid_bricks)
     get_solutions(medium_pyramid, medium_pyramid_bricks)
-    get_solutions(pyramid, pyramid_bricks)
+    get_solutions(pyramid, pyramid_bricks)   # takes about 10 min
     get_solutions(small_triangle, small_triangle_bricks)
+    # takes about 10 min
     get_solutions(medium_triangle, medium_triangle_bricks)
     # get_solutions(triangle, triangle_bricks) # takes about 15 hours
 
