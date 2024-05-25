@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
         inp = input("render 1st solution? Y/n: ")
 
-        if inp in ["Y", "y", "Yes"]:
+        if inp in ["Y", "y", "Yes", "yes"]:
 
             for file_path in file_paths:
                 data = False
