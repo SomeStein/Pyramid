@@ -22,11 +22,19 @@ if __name__ == "__main__":
         configs = get_configurations("solves/" + file_path)
         print(file_path, len(configs))
 
-    for file_path in file_paths:
-        data = False
-        with open("solves/" + file_path, "rb") as file:
-            data = pickle.load(file)
-        graph = data["graph"]
-        configs = get_configurations("solves/" + file_path)
-        config = configs[0]
-        render_configuration(graph, config)
+    inp = 0
+
+    while inp not in ["Y", "y", "Yes", "yes", "N", "n", "No", "no"]:
+
+        inp = input("render 1st solution? Y/n: ")
+
+        if inp in ["Y", "y", "Yes"]:
+
+            for file_path in file_paths:
+                data = False
+                with open("solves/" + file_path, "rb") as file:
+                    data = pickle.load(file)
+                graph = data["graph"]
+                configs = get_configurations("solves/" + file_path)
+                config = configs[0]
+                render_configuration(graph, config)

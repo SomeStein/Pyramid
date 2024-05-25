@@ -173,4 +173,6 @@ def render_configuration(graph: Graph, configuration: dict[int, int]):
     ax.scatter(x_coords, y_coords, z_coords, c=colors, marker='o', s=100)
     ax.set_axis_off()
 
+    fig.canvas.manager.set_window_title(graph.name.replace("_", " "))
+
     plt.show()
