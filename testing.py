@@ -27,5 +27,6 @@ if __name__ == "__main__":
         with open("solves/" + file_path, "rb") as file:
             data = pickle.load(file)
         graph = data["graph"]
+        configs = get_configurations("solves/" + file_path)
         config = configs[0]
         render_configuration(graph, config)
