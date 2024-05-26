@@ -13,11 +13,10 @@ if __name__ == "__main__":
 
     get_solutions(small_pyramid, small_pyramid_bricks)
     get_solutions(medium_pyramid, medium_pyramid_bricks)
-    get_solutions(pyramid, pyramid_bricks)   # takes about 10 min
+    get_solutions(pyramid, pyramid_bricks)
     get_solutions(small_triangle, small_triangle_bricks)
-    # takes about 10 min
     get_solutions(medium_triangle, medium_triangle_bricks)
-    # get_solutions(triangle, triangle_bricks) # takes about 15 hours
+    # get_solutions(triangle, triangle_bricks)  # takes about 5 hours
 
     file_paths = os.listdir("solves")
     for file_path in file_paths:
@@ -27,7 +26,6 @@ if __name__ == "__main__":
     inp = 0
 
     while inp not in ["Y", "y", "Yes", "yes", "N", "n", "No", "no"]:
-
         inp = input("render solution preview? Y/n: ")
 
         if inp in ["Y", "y", "Yes", "yes"]:

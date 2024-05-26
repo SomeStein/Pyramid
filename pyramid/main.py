@@ -9,7 +9,7 @@ from rich.progress import Progress, TextColumn, BarColumn, TimeElapsedColumn
 from pyramid.graph import Graph
 from pyramid.brick import Brick
 from pyramid.processing import process_solutions
-from pyramid.preprocessing import initialize
+from pyramid.preprocessing import preprocessing
 
 # node id mess (again dumbo)
 
@@ -27,7 +27,7 @@ def get_solutions(graph: Graph, bricks: list[Brick], num_processes: int = os.cpu
 
         queue = manager.Queue()
         total_found = manager.Value('i', 0, lock=False)
-        argument_list = initialize(
+        argument_list = preprocessing(
             graph, bricks, num_processes, queue, total_found)
 
         with Progress(
@@ -109,7 +109,7 @@ def get_configurations(file_path):
         data: dict = pickle.load(file)
         graph: Graph = data["graph"]
         bricks: list[Brick] = data["bricks"]
-        order1_sets: list[list[set[int]]] = data["order1_sets"]
+        unit_check_sets: list[list[set[int]]] = data["unit_check_sets"]
         solutions: list[list[int]] = data["solutions"]
 
     configurations = []
@@ -117,7 +117,7 @@ def get_configurations(file_path):
     for sol in solutions:
         configuration = {}
         for i, index in enumerate(sol):
-            for node_id in order1_sets[i][index]:
+            for node_id in unit_check_sets[i][index]:
                 configuration[node_id] = bricks[i].id
         configurations.append(configuration)
 

@@ -6,7 +6,7 @@ counts = [0]*13
 last_time = time.time()
 
 
-def process_solutions(task_id: int, queue, total_found, file_path: str, order1_sets: list[list[set[int]]], ranges: list[tuple[int]], check_set: set[int] = set(), sol: list[int] = []) -> None:
+def process_solutions(task_id: int, queue, total_found, file_path: str, unit_check_sets: list[list[set[int]]], ranges: list[tuple[int]], check_set: set[int] = set(), sol: list[int] = []) -> None:
 
     try:
 
@@ -39,11 +39,11 @@ def process_solutions(task_id: int, queue, total_found, file_path: str, order1_s
 
         start, end = ranges[len_sol]
 
-        for i, brick_set in enumerate(order1_sets[len_sol][start:end]):
+        for i, brick_set in enumerate(unit_check_sets[len_sol][start:end]):
             merged = merge_sets(brick_set, check_set)
             if merged:
                 process_solutions(task_id, queue, total_found, file_path,
-                                  order1_sets, ranges, merged, sol + [start+i])
+                                  unit_check_sets, ranges, merged, sol + [start+i])
 
         if len_sol == 0:
 

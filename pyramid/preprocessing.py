@@ -1,10 +1,10 @@
 import pickle
 from pyramid.graph import Graph
 from pyramid.brick import Brick, calculate_brick_transforms
-from pyramid.helper_functions import symmetries_filter, optimize_brick_order, ranges_generator
+from pyramid.helper_functions import symmetries_filter, optimize_brick_order, ranges_generator, get_combinations
 
 
-def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
+def initialize(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
 
     # get steps from graph for orientations
     steps = graph.get_all_offsets()
@@ -30,16 +30,18 @@ def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
     return order1_sets
 
 
-def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, total_found) -> list[tuple]:
+def preprocessing(graph: Graph, bricks: list[Brick], num_processes: int, queue, total_found) -> list[tuple]:
 
     print("initializing...\n")
 
-    # Unoptimized preprocessing
-    order1_sets = preprocessing(graph, bricks)
+    # initialize 1st order sets
+    order1_sets = initialize(graph, bricks)
     print("1st order list preprocessed\n")
 
     # Filter brick with highest reduction by graph symmetries
     order1_sets = symmetries_filter(graph, order1_sets)
+
+    print("filtering done!\n")
 
     # Optimize brick order
     order1_sets, brick_order = optimize_brick_order(order1_sets)
@@ -49,9 +51,17 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
 
     bricks = [bricks[i] for i in brick_order]
 
+    pre_merging_num = 0
+
+    unit_check_sets = [get_combinations(
+        order1_sets[i], order1_sets[i+1]) for i in range(0, pre_merging_num*2, 2)] + [order1_sets[i] for i in range(pre_merging_num*2, len(order1_sets))]
+
+    # unit_check_sets = order1_sets
+    print("Created unit check sets\n")
+
     # Numbers of unique brick configuratons
     string = "order 1 counts for optimized brick order:  "
-    for brick_lists in order1_sets:
+    for brick_lists in unit_check_sets:
         string += str(len(brick_lists)) + ", "
     string = string[:-2]
     print(string, "\n")
@@ -65,7 +75,7 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
             data = pickle.load(file)
             data["graph"]
             data["bricks"]
-            data["order1_sets"]
+            data["unit_check_sets"]
             data["solutions"]
 
         print("data file exists\n")
@@ -78,16 +88,16 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
 
             data = {"graph": graph,
                     "bricks": bricks,
-                    "order1_sets": order1_sets,
+                    "unit_check_sets": unit_check_sets,
                     "solutions": []}
 
             pickle.dump(data, file)
 
     else:
-        if data["order1_sets"] != order1_sets or data["bricks"] != bricks:
+        if data["unit_check_sets"] != unit_check_sets or data["bricks"] != bricks:
 
             import random
-            rn = random.randint(0, 1000)
+            rn = random.randint(0, 100_000)
             file_path = f'solves/{graph.name}_solutions({rn}).data'
 
             print("data does not match, creating new data file at", file_path, "\n")
@@ -95,7 +105,7 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
             with open(file_path, 'wb') as file:
                 data = {"graph": graph,
                         "bricks": bricks,
-                        "order1_sets": order1_sets,
+                        "unit_check_sets": unit_check_sets,
                         "solutions": []}
 
                 pickle.dump(data, file)
@@ -104,15 +114,16 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
     argument_list = []
 
     # index ranges for bricks for each process
-    lengths = [len(l) for l in order1_sets]
-    ranges_list = []
-    ranges_generator(lengths, ranges_list, num_processes)
+    lengths = [len(l) for l in unit_check_sets]
+    ranges = []
+    ranges_generator(lengths, ranges, num_processes)
 
     # Task id, manager stuff, brick set lists, ranges
     for i in range(num_processes):
-        tup = (i, queue, total_found, file_path, order1_sets, ranges_list[i])
+        tup = (i, queue, total_found, file_path,
+               unit_check_sets, ranges[i])
         argument_list.append(tup)
-        print(f"Process {i} has ranges", ranges_list[i])
+        print(f"Process {i} has ranges", ranges[i])
 
     # argument list finished
     print("\nreturning argument_list of length:", len(argument_list), "\n")
