@@ -292,7 +292,11 @@ def optimize_brick_order(order1_sets: list[list[set[int]]]) -> tuple[list[int], 
     indexed_lists = [(i, sublist) for i, sublist in enumerate(order1_sets)]
 
     # Sort the pairs based on the length of the sublists
-    sorted_indexed_lists = sorted(indexed_lists, key=lambda x: len(x[1]))
+    sorted_indexed_lists = sorted(indexed_lists, key=lambda x: len(x[1]))[::-1]
+
+    # Sort the pairs based on the length of the sublists
+    sorted_indexed_lists = sorted(
+        sorted_indexed_lists, key=lambda x: len(x[1][0]))[::-1]
 
     # Extract the sorted sublists and the original indices
     sorted_lists = [sublist for _, sublist in sorted_indexed_lists]

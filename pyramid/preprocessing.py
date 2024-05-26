@@ -4,7 +4,7 @@ from pyramid.brick import Brick, calculate_brick_transforms
 from pyramid.helper_functions import symmetries_filter, optimize_brick_order, ranges_generator, get_combinations
 
 
-def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
+def initialize(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
 
     # get steps from graph for orientations
     steps = graph.get_all_offsets()
@@ -30,29 +30,34 @@ def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
     return order1_sets
 
 
-def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, total_found) -> list[tuple]:
+def preprocessing(graph: Graph, bricks: list[Brick], num_processes: int, queue, total_found) -> list[tuple]:
 
     print("initializing...\n")
 
-    # Unoptimized preprocessing
-    order1_sets = preprocessing(graph, bricks)
+    # initialize 1st order sets
+    order1_sets = initialize(graph, bricks)
     print("1st order list preprocessed\n")
 
-    unit_check_sets = [get_combinations(
-        order1_sets[2*i], order1_sets[2*i+1]) for i in range(int(len(order1_sets)/4))] + [order1_sets[i] for i in range(int(len(order1_sets)/2), len(order1_sets))]
-
-    # unit_check_sets = order1_sets
-
     # Filter brick with highest reduction by graph symmetries
-    unit_check_sets = symmetries_filter(graph, unit_check_sets)
+    order1_sets = symmetries_filter(graph, order1_sets)
+
+    print("filtering done!\n")
 
     # Optimize brick order
-    unit_check_sets, brick_order = optimize_brick_order(unit_check_sets)
-    if brick_order != list(range(len(unit_check_sets))):
+    order1_sets, brick_order = optimize_brick_order(order1_sets)
+    if brick_order != list(range(len(order1_sets))):
         print("new brick order: ", brick_order, "\n")
         print("optimized 1st order list preprocessed\n")
 
     bricks = [bricks[i] for i in brick_order]
+
+    pre_merging_num = 0
+
+    unit_check_sets = [get_combinations(
+        order1_sets[i], order1_sets[i+1]) for i in range(0, pre_merging_num*2, 2)] + [order1_sets[i] for i in range(pre_merging_num*2, len(order1_sets))]
+
+    # unit_check_sets = order1_sets
+    print("Created unit check sets\n")
 
     # Numbers of unique brick configuratons
     string = "order 1 counts for optimized brick order:  "
@@ -92,7 +97,7 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
         if data["unit_check_sets"] != unit_check_sets or data["bricks"] != bricks:
 
             import random
-            rn = random.randint(0, 1000)
+            rn = random.randint(0, 100_000)
             file_path = f'solves/{graph.name}_solutions({rn}).data'
 
             print("data does not match, creating new data file at", file_path, "\n")
