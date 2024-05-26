@@ -38,12 +38,17 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
     order1_sets = preprocessing(graph, bricks)
     print("1st order list preprocessed\n")
 
+    unit_check_sets = [get_combinations(
+        order1_sets[2*i], order1_sets[2*i+1]) for i in range(int(len(order1_sets)/4))] + [order1_sets[i] for i in range(int(len(order1_sets)/2), len(order1_sets))]
+
+    # unit_check_sets = order1_sets
+
     # Filter brick with highest reduction by graph symmetries
-    order1_sets = symmetries_filter(graph, order1_sets)
+    unit_check_sets = symmetries_filter(graph, unit_check_sets)
 
     # Optimize brick order
-    order1_sets, brick_order = optimize_brick_order(order1_sets)
-    if brick_order != list(range(len(order1_sets))):
+    unit_check_sets, brick_order = optimize_brick_order(unit_check_sets)
+    if brick_order != list(range(len(unit_check_sets))):
         print("new brick order: ", brick_order, "\n")
         print("optimized 1st order list preprocessed\n")
 
@@ -51,7 +56,7 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
 
     # Numbers of unique brick configuratons
     string = "order 1 counts for optimized brick order:  "
-    for brick_lists in order1_sets:
+    for brick_lists in unit_check_sets:
         string += str(len(brick_lists)) + ", "
     string = string[:-2]
     print(string, "\n")
@@ -65,7 +70,7 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
             data = pickle.load(file)
             data["graph"]
             data["bricks"]
-            data["order1_sets"]
+            data["unit_check_sets"]
             data["solutions"]
 
         print("data file exists\n")
@@ -78,13 +83,13 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
 
             data = {"graph": graph,
                     "bricks": bricks,
-                    "order1_sets": order1_sets,
+                    "unit_check_sets": unit_check_sets,
                     "solutions": []}
 
             pickle.dump(data, file)
 
     else:
-        if data["order1_sets"] != order1_sets or data["bricks"] != bricks:
+        if data["unit_check_sets"] != unit_check_sets or data["bricks"] != bricks:
 
             import random
             rn = random.randint(0, 1000)
@@ -95,18 +100,13 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
             with open(file_path, 'wb') as file:
                 data = {"graph": graph,
                         "bricks": bricks,
-                        "order1_sets": order1_sets,
+                        "unit_check_sets": unit_check_sets,
                         "solutions": []}
 
                 pickle.dump(data, file)
 
     # Creating argument list
     argument_list = []
-
-    unit_check_sets = [get_combinations(
-        order1_sets[2*i], order1_sets[2*i+1]) for i in range(int(len(order1_sets)/4))] + [order1_sets[i] for i in range(int(len(order1_sets)/2), len(order1_sets))]
-
-    # unit_check_sets = order1_sets
 
     # index ranges for bricks for each process
     lengths = [len(l) for l in unit_check_sets]
