@@ -1,7 +1,7 @@
 import pickle
 from pyramid.graph import Graph
 from pyramid.brick import Brick, calculate_brick_transforms
-from pyramid.helper_functions import symmetries_filter, optimize_brick_order, ranges_generator
+from pyramid.helper_functions import symmetries_filter, optimize_brick_order, ranges_generator, get_combinations
 
 
 def preprocessing(graph: Graph, bricks: list[Brick]) -> list[list[set[int]]]:
@@ -103,16 +103,22 @@ def initialize(graph: Graph, bricks: list[Brick], num_processes: int, queue, tot
     # Creating argument list
     argument_list = []
 
+    unit_check_sets = [get_combinations(
+        order1_sets[2*i], order1_sets[2*i+1]) for i in range(int(len(order1_sets)/4))] + [order1_sets[i] for i in range(int(len(order1_sets)/2), len(order1_sets))]
+
+    # unit_check_sets = order1_sets
+
     # index ranges for bricks for each process
-    lengths = [len(l) for l in order1_sets]
-    ranges_list = []
-    ranges_generator(lengths, ranges_list, num_processes)
+    lengths = [len(l) for l in unit_check_sets]
+    ranges = []
+    ranges_generator(lengths, ranges, num_processes)
 
     # Task id, manager stuff, brick set lists, ranges
     for i in range(num_processes):
-        tup = (i, queue, total_found, file_path, order1_sets, ranges_list[i])
+        tup = (i, queue, total_found, file_path,
+               unit_check_sets, ranges[i])
         argument_list.append(tup)
-        print(f"Process {i} has ranges", ranges_list[i])
+        print(f"Process {i} has ranges", ranges[i])
 
     # argument list finished
     print("\nreturning argument_list of length:", len(argument_list), "\n")
