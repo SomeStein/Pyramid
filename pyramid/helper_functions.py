@@ -286,6 +286,8 @@ def symmetries_filter(graph, order1_sets):
     return order1_sets[:max_reduction_index] + [brick1_sets] + order1_sets[max_reduction_index+1:]
 
 
+# lexocographic primary for how much nodes the brick occupies and
+# secondary for how many unique ways of putting into graph there are
 def optimize_brick_order(order1_sets: list[list[set[int]]]) -> tuple[list[int], int]:
 
     # Pair each sublist with its original index
